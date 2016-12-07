@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GamePiece : MonoBehaviour {
 
+	private Board board;
 	private int xIndex;
 	private int yIndex;
 	private bool isMoving;
@@ -16,6 +17,10 @@ public class GamePiece : MonoBehaviour {
 		// if (Input.GetKeyDown(KeyCode.RightArrow)) {
 		// 	Move(xIndex + 1, yIndex);
 		// }
+	}
+
+	public void Init (Board board) {
+		this.board = board;
 	}
 	
 	public void SetCoord (int x, int y) {
@@ -37,8 +42,9 @@ public class GamePiece : MonoBehaviour {
 		while (!isAtDestination) {
 			if (Vector3.Distance(transform.position, destination) < 0.01f) {
 				isAtDestination = true;
-				transform.position = destination;
-				SetCoord((int)destination.x, (int)destination.y);
+				if (board) {
+					board.PlaceGamePiece(this, (int)destination.x, (int)destination.y);
+				}
 				break;
 			}
 			elapsedTime += Time.deltaTime;

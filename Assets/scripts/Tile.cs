@@ -2,11 +2,20 @@
 
 public class Tile : MonoBehaviour {
 
-	[SerializeField]
 	private int xIndex;
-	[SerializeField]
-	private int yIndex;
+	public int XIndex {
+		get {
+			return xIndex;
+		}
+	}
 
+	private int yIndex;
+	public int YIndex {
+		get {
+			return yIndex;
+		}
+	}
+	
 	private Board board;
 
 	private void OnMouseDown () {
