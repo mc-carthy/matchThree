@@ -9,8 +9,22 @@ public class Tile : MonoBehaviour {
 
 	private Board board;
 
-	private void Start () {
+	private void OnMouseDown () {
+		if (board) {
+			board.ClickTile(this);
+		}
+	}
 
+	private void OnMouseEnter () {
+		if (board) {
+			board.DragToTile(this);
+		}
+	}
+
+	private void OnMouseUp () {
+		if (board) {
+			board.ReleaseTile();
+		}
 	}
 
 	public void Init (int x, int y, Board board) {

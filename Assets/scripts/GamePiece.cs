@@ -10,12 +10,12 @@ public class GamePiece : MonoBehaviour {
 	private float easeAmount = 1.5f;
 
 	private void Update () {
-		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-			Move(xIndex - 1, yIndex);
-		}
-		if (Input.GetKeyDown(KeyCode.RightArrow)) {
-			Move(xIndex + 1, yIndex);
-		}
+		// if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+		// 	Move(xIndex - 1, yIndex);
+		// }
+		// if (Input.GetKeyDown(KeyCode.RightArrow)) {
+		// 	Move(xIndex + 1, yIndex);
+		// }
 	}
 	
 	public void SetCoord (int x, int y) {
