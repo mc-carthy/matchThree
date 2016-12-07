@@ -92,7 +92,7 @@ public class Board : MonoBehaviour {
 	}
 
 	public void DragToTile (Tile tile) {
-		if (clickedTile != null) {
+		if (clickedTile != null && IsNextTo(tile, clickedTile)) {
 			targetTile = tile;
 		}
 	}
@@ -115,6 +115,10 @@ public class Board : MonoBehaviour {
 
 	private bool IsWithinBounds (int x, int y) {
 		return (x >= 0 && x < width && y >= 0 && y < height);
+	}
+
+	private bool IsNextTo (Tile start, Tile end) {
+		return (Mathf.Abs(start.XIndex - end.XIndex) + Mathf.Abs(start.YIndex - end.YIndex)) == 1;
 	}
 
 }
