@@ -9,7 +9,7 @@ public class Board : MonoBehaviour {
 			return height;
 		}
 	}
-	
+
 	[SerializeField]
 	private int width;
 	public int Width {
@@ -35,6 +35,7 @@ public class Board : MonoBehaviour {
 				newTile.name = "Tile (" + i + ", " + j + ")";
 				newTile.transform.parent = transform;
 				allTiles[i, j] = newTile.GetComponent<Tile>();
+				allTiles[i, j].Init(i, j, this);	
 			}
 		}
 	}

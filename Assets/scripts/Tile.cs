@@ -1,16 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	[SerializeField]
+	private int xIndex;
+	[SerializeField]
+	private int yIndex;
+
+	private Board board;
+
+	private void Start () {
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	public void Init (int x, int y, Board board) {
+		xIndex = x;
+		yIndex = y;
+		this.board = board;
 	}
+
 }
