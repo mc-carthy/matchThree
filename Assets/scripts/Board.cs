@@ -3,11 +3,23 @@
 public class Board : MonoBehaviour {
 
 	[SerializeField]
-	private GameObject tilePrefab;
-	[SerializeField]
 	private int height;
+	public int Height {
+		get {
+			return height;
+		}
+	}
+	
 	[SerializeField]
 	private int width;
+	public int Width {
+		get {
+			return width;
+		}
+	}
+
+	[SerializeField]
+	private GameObject tilePrefab;
 
 	private Tile[,] allTiles;
 
