@@ -3,6 +3,26 @@ using System.Collections;
 
 public class GamePiece : MonoBehaviour {
 
+	public enum MatchValue {
+		Yellow,
+		Blue,
+		Magenta,
+		Indigo,
+		Green,
+		Teal,
+		Red,
+		Cyan,
+		Wild
+	}
+	
+	[SerializeField]
+	private MatchValue matchVal;
+	public MatchValue MatchVal {
+		get {
+			return matchVal;
+		}
+	}
+
 	private Board board;
 	private int xIndex;
 	private int yIndex;
