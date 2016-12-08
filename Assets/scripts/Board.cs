@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,7 @@ public class Board : MonoBehaviour {
 	private GamePiece[,] allGamePieces;
 	private Tile clickedTile;
 	private Tile targetTile;
+	private ParticleManager particleManager;
 	private float swapTime = 0.5f;
 	private bool isPlayerInputEnabled = true;
 
@@ -73,12 +75,13 @@ public class Board : MonoBehaviour {
 		
 	}
 
-
 	private void Start () {
 		allTiles = new Tile[width, height];
 		allGamePieces = new GamePiece[width, height];
 		SetupTiles();
 		FillBoard(15, 0.5f);
+		particleManager = GameObject.FindGameObjectWithTag("particleManager").GetComponent<ParticleManager>();
+		Assert.IsNotNull(particleManager);
 	}
 
 	public void PlaceGamePiece (GamePiece piece, int x, int y) {
