@@ -36,7 +36,7 @@ public class Board : MonoBehaviour {
 		allTiles = new Tile[width, height];
 		allGamePieces = new GamePiece[width, height];
 		SetupTiles();
-		FillRandom();
+		FillBoard();
 	}
 
 	public void PlaceGamePiece (GamePiece piece, int x, int y) {
@@ -75,17 +75,47 @@ public class Board : MonoBehaviour {
 		return gamePiecePrefabs[randomIndex];
 	}
 
-	private void FillRandom () {
+	private void FillBoard () {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
-				
-				if (randomPiece != null) {
-					randomPiece.GetComponent<GamePiece>().Init(this);
-					PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), i, j);
-					randomPiece.transform.parent = transform;
-				}
+				FillRandomAt(i, j);
 			}
+		}
+
+		bool isFilled = false;
+		int maxIterations = 100;
+		int currentInteration = 0;
+		while (!isFilled) {
+			List<GamePiece> matches = FindAllMatches();
+			if (matches.Count == 0) {
+				isFilled = true;
+				break;
+			} else {
+				ReplaceWithRandom(matches);
+			}
+
+			if (currentInteration > maxIterations) {
+				isFilled = true;
+				Debug.Log("BOARD: Could not generate board with no matches");
+			}
+			currentInteration++;
+		}
+	}
+
+	private void FillRandomAt (int x, int y) {
+		GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+		
+		if (randomPiece != null) {
+			randomPiece.GetComponent<GamePiece>().Init(this);
+			PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
+			randomPiece.transform.parent = transform;
+		}
+	}
+
+	private void ReplaceWithRandom(List<GamePiece> gamepieces) {
+		foreach (GamePiece piece in gamepieces) {
+			ClearPieceAt(piece.XIndex, piece.YIndex);
+			FillRandomAt(piece.XIndex, piece.YIndex);
 		}
 	}
 
@@ -247,6 +277,19 @@ public class Board : MonoBehaviour {
 		}
 
 		List<GamePiece> combinedMatches = horMatches.Union(verMatches).ToList();
+
+		return combinedMatches;
+	}
+
+	private List<GamePiece> FindAllMatches () {
+		List<GamePiece> combinedMatches = new List<GamePiece>();
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				List<GamePiece> matches = FindMatchesAt(i, j);
+				combinedMatches = combinedMatches.Union(matches).ToList();
+			}
+		}
 
 		return combinedMatches;
 	}
