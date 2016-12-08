@@ -9,7 +9,7 @@ public class ParticleManager : MonoBehaviour {
 	[SerializeField]
 	private GameObject doubleBreakFxPrefab;
 
-	public void ClearPieceFxAt (int x, int y, int z = 0) {
+	public void ClearPieceFxAt (int x, int y, int z = 1) {
 		if (clearFxPrefab != null) {
 			GameObject clearFx = Instantiate(clearFxPrefab, new Vector3(x, y, z), Quaternion.identity) as GameObject;
 

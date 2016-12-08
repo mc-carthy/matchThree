@@ -6,9 +6,8 @@ public class ParticlePlayer : MonoBehaviour {
 	private ParticleSystem[] allParticles;
 	private float lifeTime = 1f;
 
-	private void Start () {
+	private void Awake () {
 		allParticles = GetComponentsInChildren<ParticleSystem>();
-
 		Destroy(gameObject, lifeTime);
 	}
 

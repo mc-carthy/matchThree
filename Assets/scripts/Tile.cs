@@ -18,6 +18,14 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
+	[SerializeField]
+	private int breakableValue = 0;
+	public int BreakableValue {
+		get {
+			return breakableValue;
+		}
+	}
+
 	private int xIndex;
 	public int XIndex {
 		get {
@@ -32,8 +40,6 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	[SerializeField]
-	private int breakableValue = 0;
 	[SerializeField]
 	private Sprite[] breakableSprites;
 

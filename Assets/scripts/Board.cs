@@ -428,7 +428,7 @@ public class Board : MonoBehaviour {
 			Destroy(pieceToClear.gameObject);
 		}
 
-		HighlightTileOff(x, y);
+		// HighlightTileOff(x, y);
 	}
 
 	private void ClearBoard () {
@@ -443,6 +443,9 @@ public class Board : MonoBehaviour {
 		foreach (GamePiece piece in gamePieces) {
 			if (piece != null) {
 				ClearPieceAt(piece.XIndex, piece.YIndex);
+				if (particleManager != null) {
+					particleManager.ClearPieceFxAt(piece.XIndex, piece.YIndex);
+				}
 			}
 		}
 	}
@@ -450,7 +453,10 @@ public class Board : MonoBehaviour {
 	private void BreakTileAt (int x, int y) {
 		Tile tileToBreak = allTiles[x, y];
 
-		if (tileToBreak != null) {
+		if (tileToBreak != null && tileToBreak.TType == TileType.Breakable) {
+			if (particleManager != null) {
+				particleManager.BreakTileFxAt(tileToBreak.BreakableValue, x, y);
+			}
 			tileToBreak.BreakTile();
 		}
 	}
@@ -541,9 +547,10 @@ public class Board : MonoBehaviour {
 		List<GamePiece> movingPieces = new List<GamePiece>();
 		List<GamePiece> matches = new List<GamePiece>();
 
-		HighlightPieces(gamePieces);
 
-		yield return new WaitForSeconds(0.5f);
+		// HighlightPieces(gamePieces);
+
+		yield return new WaitForSeconds(0.2f);
 
 		bool isFinished = false;
 
@@ -559,7 +566,7 @@ public class Board : MonoBehaviour {
 				yield return null;
 			}
 
-			yield return new WaitForSeconds(0.5f);
+			yield return new WaitForSeconds(0.2f);
 
 			matches = FindMatchesAt(movingPieces);
 
