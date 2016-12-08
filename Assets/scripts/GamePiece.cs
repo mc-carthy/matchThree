@@ -14,6 +14,20 @@ public class GamePiece : MonoBehaviour {
 		Cyan,
 		Wild
 	}
+
+	private int xIndex;
+	public int XIndex {
+		get {
+			return xIndex;
+		}
+	}
+
+	private int yIndex;
+	public int YIndex {
+		get {
+			return yIndex;
+		}
+	}
 	
 	[SerializeField]
 	private MatchValue matchVal;
@@ -24,8 +38,6 @@ public class GamePiece : MonoBehaviour {
 	}
 
 	private Board board;
-	private int xIndex;
-	private int yIndex;
 	private bool isMoving;
 	[Range(0, 2)]
 	private float easeAmount = 1.5f;
