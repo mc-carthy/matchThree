@@ -1,6 +1,20 @@
 ﻿using UnityEngine;
 
+
+public enum TileType {
+	Normal,
+	Obstacle
+}
+
 public class Tile : MonoBehaviour {
+
+	[SerializeField]
+	private TileType tType; 
+	public TileType TType {
+		get {
+			return tType;
+		}
+	}
 
 	private int xIndex;
 	public int XIndex {
@@ -15,7 +29,7 @@ public class Tile : MonoBehaviour {
 			return yIndex;
 		}
 	}
-	
+
 	private Board board;
 
 	private void OnMouseDown () {
