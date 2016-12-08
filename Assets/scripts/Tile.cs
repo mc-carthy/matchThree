@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
-
+using System.Collections;
 
 public enum TileType {
 	Normal,
-	Obstacle
+	Obstacle,
+	Breakable
 }
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Tile : MonoBehaviour {
 
 	[SerializeField]
@@ -30,7 +32,38 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
+	[SerializeField]
+	private int breakableValue = 0;
+	[SerializeField]
+	private Sprite[] breakableSprites;
+
 	private Board board;
+	private SpriteRenderer spriteRenderer;
+	private Color normalColor;
+
+	private void Awake () {
+		spriteRenderer = GetComponent<SpriteRenderer>();
+	}
+
+	public void Init (int x, int y, Board board) {
+		xIndex = x;
+		yIndex = y;
+		this.board = board;
+
+		if (tType == TileType.Breakable) {
+			if (breakableSprites[breakableValue] != null) {
+				spriteRenderer.sprite = breakableSprites[breakableValue];
+			}
+		}
+	}
+
+	public void BreakTile () {
+		if (tType != TileType.Breakable) {
+			return;
+		}
+
+		StartCoroutine(BreakTileRoutine());
+	}
 
 	private void OnMouseDown () {
 		if (board) {
@@ -50,10 +83,18 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	public void Init (int x, int y, Board board) {
-		xIndex = x;
-		yIndex = y;
-		this.board = board;
+	private IEnumerator BreakTileRoutine () {
+		breakableValue = Mathf.Clamp(breakableValue--, 0, breakableValue);
+		yield return new WaitForSeconds(0.25f);
+
+		if (breakableSprites[breakableValue] != null) {
+			spriteRenderer.sprite = breakableSprites[breakableValue];
+		}
+
+		if (breakableValue == 0) {
+			tType = TileType.Normal;
+			spriteRenderer.color = normalColor;
+		}
 	}
 
 }
