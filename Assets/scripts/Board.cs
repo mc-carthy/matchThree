@@ -202,29 +202,42 @@ public class Board : MonoBehaviour {
 	private void HighlightMatches () {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				SpriteRenderer spriteRenderer = allTiles[i, j].GetComponent<SpriteRenderer>();
-				spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+				HighlightTileOff(i, j);
 
-				List<GamePiece> horMatches = FindHorizontalMatches(i, j);
-				List<GamePiece> verMatches = FindVerticalMatches(i, j);
-
-				if (horMatches == null) {
-					horMatches = new List<GamePiece>();
-				}
-				if (verMatches == null) {
-					verMatches = new List<GamePiece>();
-				}
-
-				List<GamePiece> combinedMatches = horMatches.Union(verMatches).ToList();
+				List<GamePiece> combinedMatches = FindMatchesAt(i, j);
 
 				if (combinedMatches.Count > 0) {
 					foreach(GamePiece piece in combinedMatches) {
-						spriteRenderer = allTiles[piece.XIndex, piece.YIndex].GetComponent<SpriteRenderer>();
-						spriteRenderer.color = piece.GetComponent<SpriteRenderer>().color;
+						HighlightTileOn(piece.XIndex, piece.YIndex, piece.GetComponent<SpriteRenderer>().color);
 					}
 				}
 			}
 		}
 	}
 
+	private List<GamePiece> FindMatchesAt(int x, int y, int minLength = 3) {
+		List<GamePiece> horMatches = FindHorizontalMatches(x, y, minLength);
+		List<GamePiece> verMatches = FindVerticalMatches(x, y, minLength);
+
+		if (horMatches == null) {
+			horMatches = new List<GamePiece>();
+		}
+		if (verMatches == null) {
+			verMatches = new List<GamePiece>();
+		}
+
+		List<GamePiece> combinedMatches = horMatches.Union(verMatches).ToList();
+
+		return combinedMatches;
+	}
+
+	private void HighlightTileOff (int x, int y) {
+		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
+		spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+	}
+
+	private void HighlightTileOn (int x, int y, Color col) {
+		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
+		spriteRenderer.color = col;
+	}
 }
