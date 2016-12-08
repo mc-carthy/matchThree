@@ -37,7 +37,6 @@ public class Board : MonoBehaviour {
 		allGamePieces = new GamePiece[width, height];
 		SetupTiles();
 		FillRandom();
-		// HighlightMatches();
 	}
 
 	public void PlaceGamePiece (GamePiece piece, int x, int y) {
@@ -131,11 +130,14 @@ public class Board : MonoBehaviour {
 			if (targetTileMatches.Count == 0 && clickedPieceMatches.Count == 0) {
 				clickedPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
 				targetPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
+			} else {
+				yield return new WaitForSeconds(swapTime);
+
+				ClearPieceAt(clickedPieceMatches);
+				ClearPieceAt(targetTileMatches);
+				// HighlightMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
+				// HighlightMatchesAt(targetTile.XIndex, targetTile.YIndex);
 			}
-
-			HighlightMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
-			HighlightMatchesAt(targetTile.XIndex, targetTile.YIndex);
-
 		}
 	}
 
@@ -176,10 +178,14 @@ public class Board : MonoBehaviour {
 
 			GamePiece nextPiece = allGamePieces[nextX, nextY];
 
-			if (nextPiece.MatchVal == startPiece.MatchVal && !matches.Contains(nextPiece)) {
-				matches.Add(nextPiece);
-			} else {
+			if (nextPiece == null) {
 				break;
+			} else {
+				if (nextPiece.MatchVal == startPiece.MatchVal && !matches.Contains(nextPiece)) {
+					matches.Add(nextPiece);
+				} else {
+					break;
+				}
 			}
 
 		}
@@ -265,5 +271,30 @@ public class Board : MonoBehaviour {
 	private void HighlightTileOn (int x, int y, Color col) {
 		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
 		spriteRenderer.color = col;
+	}
+
+	private void ClearPieceAt (int x, int y) {
+		GamePiece pieceToClear = allGamePieces[x, y];
+
+		if (pieceToClear) {
+			allGamePieces[x, y] = null;
+			Destroy(pieceToClear.gameObject);
+		}
+
+		HighlightTileOff(x, y);
+	}
+
+	private void ClearBoard () {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				ClearPieceAt(i, j);
+			}
+		}
+	}
+
+	private void ClearPieceAt(List<GamePiece> gamepieces) {
+		foreach (GamePiece piece in gamepieces) {
+			ClearPieceAt(piece.XIndex, piece.YIndex);
+		}
 	}
 }
