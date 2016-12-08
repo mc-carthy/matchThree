@@ -444,7 +444,7 @@ public class Board : MonoBehaviour {
 		List<GamePiece> movingPieces = new List<GamePiece>();
 
 		for (int i = 0; i < height - 1; i++) {
-			if (allGamePieces[column, i] == null) {
+			if (allGamePieces[column, i] == null && allTiles[column, i].TType != TileType.Obstacle) {
 				for (int j = i + 1; j < height; j++) {
 					if (allGamePieces[column, j] != null) {
 						allGamePieces[column, j].Move(column, i, collapseTime * (j - i));
