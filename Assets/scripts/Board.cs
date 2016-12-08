@@ -37,7 +37,7 @@ public class Board : MonoBehaviour {
 		allTiles = new Tile[width, height];
 		allGamePieces = new GamePiece[width, height];
 		SetupTiles();
-		FillBoard();
+		FillBoard(15, 0.5f);
 	}
 
 	public void PlaceGamePiece (GamePiece piece, int x, int y) {
@@ -76,14 +76,14 @@ public class Board : MonoBehaviour {
 		return gamePiecePrefabs[randomIndex];
 	}
 
-	private void FillBoard () {
+	private void FillBoard (int falseYOffset = 0, float moveTime = 0.1f) {
 
 		List<GamePiece> addedPieces = new List<GamePiece>();
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				if (allGamePieces[i, j] == null) {
-					GamePiece piece = FillRandomAt(i, j);
+					GamePiece piece = (falseYOffset == 0) ? FillRandomAt(i, j) : FillRandomAt(i, j, falseYOffset, moveTime);
 					addedPieces.Add(piece);
 				}
 			}
@@ -99,7 +99,11 @@ public class Board : MonoBehaviour {
 				break;
 			} else {
 				matches = matches.Intersect(addedPieces).ToList();
-				ReplaceWithRandom(matches);
+				if (falseYOffset == 0) {
+					ReplaceWithRandom(matches);
+				} else {
+					ReplaceWithRandom(matches, falseYOffset, moveTime);
+				}
 			}
 
 			if (currentInteration > maxIterations) {
@@ -110,22 +114,30 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private GamePiece FillRandomAt (int x, int y) {
+	private GamePiece FillRandomAt (int x, int y, int falseYOffset = 0, float moveTime = 0.1f) {
 		GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 		
 		if (randomPiece != null) {
 			randomPiece.GetComponent<GamePiece>().Init(this);
 			PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
+			if (falseYOffset != 0) {
+				randomPiece.transform.position = new Vector3(x, y + falseYOffset, 0);
+				randomPiece.GetComponent<GamePiece>().Move(x, y, moveTime);
+			}
 			randomPiece.transform.parent = transform;
 		}
 
 		return randomPiece.GetComponent<GamePiece>();
 	}
 
-	private void ReplaceWithRandom(List<GamePiece> gamePieces) {
+	private void ReplaceWithRandom(List<GamePiece> gamePieces, int falseYOffset = 0, float moveTime = 0.1f) {
 		foreach (GamePiece piece in gamePieces) {
 			ClearPieceAt(piece.XIndex, piece.YIndex);
-			FillRandomAt(piece.XIndex, piece.YIndex);
+			if (falseYOffset == 0) {
+				FillRandomAt(piece.XIndex, piece.YIndex);
+			} else {
+				FillRandomAt(piece.XIndex, piece.YIndex, falseYOffset, moveTime);
+			}
 		}
 	}
 
@@ -428,11 +440,21 @@ public class Board : MonoBehaviour {
 
 	private IEnumerator ClearAndRefillBoardRoutine (List<GamePiece> gamePieces) {
 		isPlayerInputEnabled = false;
-		yield return StartCoroutine(ClearAndCollapseRoutine(gamePieces));
-		
-		yield return null;
 
-		yield return StartCoroutine(RefillRoutine());
+		List<GamePiece> matches = gamePieces;
+
+		do {
+			yield return StartCoroutine(ClearAndCollapseRoutine(matches));
+			
+			yield return null;
+
+			yield return StartCoroutine(RefillRoutine());
+
+			matches = FindAllMatches();
+
+			yield return new WaitForSeconds (0.5f);
+		} while (matches.Count != 0);
+
 		isPlayerInputEnabled = true;
 	}
 
@@ -473,7 +495,7 @@ public class Board : MonoBehaviour {
 	}
 
 	private IEnumerator RefillRoutine () {
-		FillBoard();
+		FillBoard(10, 0.5f);
 		yield return null;
 	}
 
