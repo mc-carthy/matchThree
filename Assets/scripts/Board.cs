@@ -77,9 +77,15 @@ public class Board : MonoBehaviour {
 	}
 
 	private void FillBoard () {
+
+		List<GamePiece> addedPieces = new List<GamePiece>();
+
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				FillRandomAt(i, j);
+				if (allGamePieces[i, j] == null) {
+					GamePiece piece = FillRandomAt(i, j);
+					addedPieces.Add(piece);
+				}
 			}
 		}
 
@@ -92,6 +98,7 @@ public class Board : MonoBehaviour {
 				isFilled = true;
 				break;
 			} else {
+				matches = matches.Intersect(addedPieces).ToList();
 				ReplaceWithRandom(matches);
 			}
 
@@ -103,7 +110,7 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private void FillRandomAt (int x, int y) {
+	private GamePiece FillRandomAt (int x, int y) {
 		GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 		
 		if (randomPiece != null) {
@@ -111,6 +118,8 @@ public class Board : MonoBehaviour {
 			PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
 			randomPiece.transform.parent = transform;
 		}
+
+		return randomPiece.GetComponent<GamePiece>();
 	}
 
 	private void ReplaceWithRandom(List<GamePiece> gamePieces) {
@@ -464,6 +473,7 @@ public class Board : MonoBehaviour {
 	}
 
 	private IEnumerator RefillRoutine () {
+		FillBoard();
 		yield return null;
 	}
 
