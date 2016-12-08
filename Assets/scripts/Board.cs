@@ -254,14 +254,6 @@ public class Board : MonoBehaviour {
 		return (combinedMatches.Count >= minLength) ? combinedMatches : null;
 	}
 
-	private void HighlightMatches () {
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				HighlightMatchesAt(i, j);
-			}
-		}
-	}
-
 	private List<GamePiece> FindMatchesAt(int x, int y, int minLength = 3) {
 		List<GamePiece> horMatches = FindHorizontalMatches(x, y, minLength);
 		List<GamePiece> verMatches = FindVerticalMatches(x, y, minLength);
@@ -303,6 +295,16 @@ public class Board : MonoBehaviour {
 		return combinedMatches;
 	}
 
+	private void HighlightTileOff (int x, int y) {
+		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
+		spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+	}
+
+	private void HighlightTileOn (int x, int y, Color col) {
+		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
+		spriteRenderer.color = col;
+	}
+
 	private void HighlightMatchesAt (int x, int y) {
 		HighlightTileOff(x, y);
 
@@ -315,14 +317,20 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private void HighlightTileOff (int x, int y) {
-		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
-		spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+	private void HighlightMatches () {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				HighlightMatchesAt(i, j);
+			}
+		}
 	}
 
-	private void HighlightTileOn (int x, int y, Color col) {
-		SpriteRenderer spriteRenderer = allTiles[x, y].GetComponent<SpriteRenderer>();
-		spriteRenderer.color = col;
+	private void HighlightPieces (List<GamePiece> gamePieces) {
+		foreach (GamePiece piece in gamePieces) {
+			if (piece) {
+				HighlightTileOn(piece.XIndex, piece.YIndex, piece.GetComponent<SpriteRenderer>().color);
+			}
+		}
 	}
 
 	private void ClearPieceAt (int x, int y) {
@@ -417,6 +425,8 @@ public class Board : MonoBehaviour {
 
 		List<GamePiece> movingPieces = new List<GamePiece>();
 		List<GamePiece> matches = new List<GamePiece>();
+
+		HighlightPieces(gamePieces);
 
 		yield return new WaitForSeconds(0.5f);
 
