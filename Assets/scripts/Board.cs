@@ -118,13 +118,25 @@ public class Board : MonoBehaviour {
 		GamePiece clickedPiece = allGamePieces[clickedTile.XIndex, clickedTile.YIndex];
 		GamePiece targetPiece = allGamePieces[targetTile.XIndex, targetTile.YIndex];
 
-		clickedPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
-		targetPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
+		if (clickedPiece != null && targetPiece != null) {
 
-		yield return new WaitForSeconds(swapTime);
+			clickedPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
+			targetPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
 
-		HighlightMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
-		HighlightMatchesAt(targetTile.XIndex, targetTile.YIndex);
+			yield return new WaitForSeconds(swapTime);
+
+			List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
+			List<GamePiece> targetTileMatches = FindMatchesAt(targetTile.XIndex, targetTile.YIndex);
+
+			if (targetTileMatches.Count == 0 && clickedPieceMatches.Count == 0) {
+				clickedPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
+				targetPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
+			}
+
+			HighlightMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
+			HighlightMatchesAt(targetTile.XIndex, targetTile.YIndex);
+
+		}
 	}
 
 	private bool IsWithinBounds (int x, int y) {
