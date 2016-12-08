@@ -30,13 +30,14 @@ public class Board : MonoBehaviour {
 	private GamePiece[,] allGamePieces;
 	private Tile clickedTile;
 	private Tile targetTile;
+	private float swapTime = 0.5f;
 
 	private void Start () {
 		allTiles = new Tile[width, height];
 		allGamePieces = new GamePiece[width, height];
 		SetupTiles();
 		FillRandom();
-		HighlightMatches();
+		// HighlightMatches();
 	}
 
 	public void PlaceGamePiece (GamePiece piece, int x, int y) {
@@ -110,11 +111,20 @@ public class Board : MonoBehaviour {
 	}
 
 	private void SwitchTiles (Tile clickedTile, Tile targetTile) {
+		StartCoroutine(SwitchTilesRoutine(clickedTile, targetTile));
+	}
+
+	private IEnumerator SwitchTilesRoutine (Tile clickedTile, Tile targetTile) {
 		GamePiece clickedPiece = allGamePieces[clickedTile.XIndex, clickedTile.YIndex];
 		GamePiece targetPiece = allGamePieces[targetTile.XIndex, targetTile.YIndex];
 
-		clickedPiece.Move(targetTile.XIndex, targetTile.YIndex);
-		targetPiece.Move(clickedTile.XIndex, clickedTile.YIndex);
+		clickedPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
+		targetPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
+
+		yield return new WaitForSeconds(swapTime);
+
+		HighlightMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
+		HighlightMatchesAt(targetTile.XIndex, targetTile.YIndex);
 	}
 
 	private bool IsWithinBounds (int x, int y) {
@@ -202,15 +212,7 @@ public class Board : MonoBehaviour {
 	private void HighlightMatches () {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				HighlightTileOff(i, j);
-
-				List<GamePiece> combinedMatches = FindMatchesAt(i, j);
-
-				if (combinedMatches.Count > 0) {
-					foreach(GamePiece piece in combinedMatches) {
-						HighlightTileOn(piece.XIndex, piece.YIndex, piece.GetComponent<SpriteRenderer>().color);
-					}
-				}
+				HighlightMatchesAt(i, j);
 			}
 		}
 	}
@@ -229,6 +231,18 @@ public class Board : MonoBehaviour {
 		List<GamePiece> combinedMatches = horMatches.Union(verMatches).ToList();
 
 		return combinedMatches;
+	}
+
+	private void HighlightMatchesAt (int x, int y) {
+		HighlightTileOff(x, y);
+
+		List<GamePiece> combinedMatches = FindMatchesAt(x, y);
+
+		if (combinedMatches.Count > 0) {
+			foreach(GamePiece piece in combinedMatches) {
+				HighlightTileOn(piece.XIndex, piece.YIndex, piece.GetComponent<SpriteRenderer>().color);
+			}
+		}
 	}
 
 	private void HighlightTileOff (int x, int y) {
