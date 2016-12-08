@@ -112,8 +112,8 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private void ReplaceWithRandom(List<GamePiece> gamepieces) {
-		foreach (GamePiece piece in gamepieces) {
+	private void ReplaceWithRandom(List<GamePiece> gamePieces) {
+		foreach (GamePiece piece in gamePieces) {
 			ClearPieceAt(piece.XIndex, piece.YIndex);
 			FillRandomAt(piece.XIndex, piece.YIndex);
 		}
@@ -155,18 +155,19 @@ public class Board : MonoBehaviour {
 			yield return new WaitForSeconds(swapTime);
 
 			List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
-			List<GamePiece> targetTileMatches = FindMatchesAt(targetTile.XIndex, targetTile.YIndex);
+			List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.XIndex, targetTile.YIndex);
 
-			if (targetTileMatches.Count == 0 && clickedPieceMatches.Count == 0) {
+			if (targetPieceMatches.Count == 0 && clickedPieceMatches.Count == 0) {
 				clickedPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
 				targetPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
 			} else {
 				yield return new WaitForSeconds(swapTime);
 
 				ClearPieceAt(clickedPieceMatches);
-				ClearPieceAt(targetTileMatches);
-				// HighlightMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
-				// HighlightMatchesAt(targetTile.XIndex, targetTile.YIndex);
+				ClearPieceAt(targetPieceMatches);
+
+				CollapseColumn(clickedPieceMatches);
+				CollapseColumn(targetPieceMatches);
 			}
 		}
 	}
@@ -335,9 +336,58 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private void ClearPieceAt(List<GamePiece> gamepieces) {
-		foreach (GamePiece piece in gamepieces) {
+	private void ClearPieceAt(List<GamePiece> gamePieces) {
+		foreach (GamePiece piece in gamePieces) {
 			ClearPieceAt(piece.XIndex, piece.YIndex);
 		}
+	}
+
+	private List<GamePiece> CollapseColumn (int column, float collapseTime = 0.1f) {
+		List<GamePiece> movingPieces = new List<GamePiece>();
+
+		for (int i = 0; i < height - 1; i++) {
+			if (allGamePieces[column, i] == null) {
+				for (int j = i + 1; j < height; j++) {
+					if (allGamePieces[column, j] != null) {
+						allGamePieces[column, j].Move(column, i, collapseTime);
+						allGamePieces[column, i] = allGamePieces[column, j];
+						allGamePieces[column, i].SetCoord(column, i);
+
+						if (!movingPieces.Contains(allGamePieces[column, i])) {
+							movingPieces.Add(allGamePieces[column, i]);
+						}
+
+						allGamePieces[column, j] = null;
+						
+						break;
+					}
+				}
+			}
+		}
+
+		return movingPieces;
+	}
+
+	private List<GamePiece> CollapseColumn (List<GamePiece> gamePieces) {
+		List<GamePiece> movingPieces = new List<GamePiece>();
+		List<int> columnsToCollapse = GetColumns(gamePieces);
+
+		foreach (int column in columnsToCollapse) {
+			movingPieces = movingPieces.Union(CollapseColumn(column)).ToList();
+		}
+
+		return movingPieces;
+	}
+
+	private List<int> GetColumns (List<GamePiece> gamePieces) {
+		List<int> columns = new List<int>();
+
+		foreach (GamePiece piece in gamePieces) {
+			if (!columns.Contains(piece.XIndex)) {
+				columns.Add(piece.XIndex);
+			}
+		}
+
+		return columns;
 	}
 }
