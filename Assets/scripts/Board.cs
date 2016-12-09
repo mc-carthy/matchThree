@@ -313,12 +313,16 @@ public class Board : MonoBehaviour {
 
 					if (clickedTileBomb != null && targetPiece != null) {
 						GamePiece clickedBombPiece = clickedTileBomb.GetComponent<GamePiece>();
-						clickedBombPiece.ChangeColor(targetPiece);
+						if (!IsColorBomb(clickedBombPiece)) {
+							clickedBombPiece.ChangeColor(targetPiece);
+						}
 					}
 
 					if (targetTileBomb != null && clickedPiece != null) {
 						GamePiece targetBombPiece = targetTileBomb.GetComponent<GamePiece>();
-						targetBombPiece.ChangeColor(clickedPiece);
+						if (!IsColorBomb(targetBombPiece)) {
+							targetBombPiece.ChangeColor(clickedPiece);
+						}
 					}
 
 					ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList().Union(colorMatches).ToList());
@@ -802,11 +806,20 @@ public class Board : MonoBehaviour {
 					bomb = MakeBomb(adjacentBombPrefab, x, y);
 				}
 			} else {
-				if (swapDirection.x != 0) {
-					bomb = MakeBomb(rowBombPrefab, x, y);
+				if (gamePieces.Count >= 5) {
+					if (colorBombPrefab != null) {
+						bomb = MakeBomb(colorBombPrefab, x, y);
+					}
 				} else {
-					bomb = MakeBomb(columnBombPrefab, x, y);
-
+					if (swapDirection.x != 0) {
+						if (rowBombPrefab != null) {
+							bomb = MakeBomb(rowBombPrefab, x, y);
+						}
+					} else {
+						if (columnBombPrefab != null) {
+							bomb = MakeBomb(columnBombPrefab, x, y);
+						}
+					}
 				}
 			}
 		}
