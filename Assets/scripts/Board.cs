@@ -104,6 +104,12 @@ public class Board : MonoBehaviour {
 	private void Start () {
 		allTiles = new Tile[width, height];
 		allGamePieces = new GamePiece[width, height];
+
+		particleManager = GameObject.FindGameObjectWithTag("particleManager").GetComponent<ParticleManager>();
+		Assert.IsNotNull(particleManager);
+	}
+
+	public void SetupBoard () {
 		SetupTiles();
 		SetupGamePieces();
 
@@ -111,8 +117,6 @@ public class Board : MonoBehaviour {
 		collectibleCount = startingCollectibles.Count;
 
 		FillBoard(falseYOffset, moveTime);
-		particleManager = GameObject.FindGameObjectWithTag("particleManager").GetComponent<ParticleManager>();
-		Assert.IsNotNull(particleManager);
 	}
 
 	public void PlaceGamePiece (GamePiece piece, int x, int y) {
@@ -568,7 +572,7 @@ public class Board : MonoBehaviour {
 	private void ClearPieceAt (List<GamePiece> gamePieces, List<GamePiece> bombedPieces) {
 		foreach (GamePiece piece in gamePieces) {
 			if (piece != null) {
-				
+
 				int bonus = 0;
 				if (gamePieces.Count >= 4) {
 					bonus = 5 * gamePieces.Count;

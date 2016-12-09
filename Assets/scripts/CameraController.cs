@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour {
 	private Board board;
 	private int boardHeight;
 	private int boardWidth;
-	private float borderSize = 0.5f;
+	private float borderSize = 1f;
 
 	private void Start () {
 		boardHeight = board.Height;
