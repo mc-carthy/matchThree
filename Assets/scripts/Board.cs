@@ -61,6 +61,7 @@ public class Board : MonoBehaviour {
 	private GameObject targetTileBomb;
 	private float swapTime = 0.5f;
 	private int collectibleCount;
+	private int scoreMultiplier;
 	private bool isPlayerInputEnabled = true;
 	 
 
@@ -567,7 +568,13 @@ public class Board : MonoBehaviour {
 	private void ClearPieceAt (List<GamePiece> gamePieces, List<GamePiece> bombedPieces) {
 		foreach (GamePiece piece in gamePieces) {
 			if (piece != null) {
-				piece.ScorePoints();
+				
+				int bonus = 0;
+				if (gamePieces.Count >= 4) {
+					bonus = 5 * gamePieces.Count;
+				}
+
+				piece.ScorePoints(scoreMultiplier, bonus);
 				ClearPieceAt(piece.XIndex, piece.YIndex);
 				if (particleManager != null) {
 					if (bombedPieces.Contains(piece)) {
@@ -657,7 +664,10 @@ public class Board : MonoBehaviour {
 
 		List<GamePiece> matches = gamePieces;
 
+		scoreMultiplier = 0;
+
 		do {
+			scoreMultiplier++;
 			yield return StartCoroutine(ClearAndCollapseRoutine(matches));
 			
 			yield return null;
@@ -727,6 +737,7 @@ public class Board : MonoBehaviour {
 				isFinished = true;
 				break;
 			} else {
+				scoreMultiplier++;
 				yield return StartCoroutine(ClearAndCollapseRoutine(matches));
 			}
 		}

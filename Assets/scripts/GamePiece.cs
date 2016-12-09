@@ -26,6 +26,14 @@ public class GamePiece : MonoBehaviour {
 			matchVal = value;
 		}
 	}
+
+	[SerializeField]
+	private int scoreValue = 20;
+	public int ScoreValue {
+		get {
+			return scoreValue;
+		}
+	}
 	
 	private int xIndex;
 	public int XIndex {
@@ -38,13 +46,6 @@ public class GamePiece : MonoBehaviour {
 	public int YIndex {
 		get {
 			return yIndex;
-		}
-	}
-
-	private int scoreValue = 20;
-	public int ScoreValue {
-		get {
-			return scoreValue;
 		}
 	}
 
@@ -95,9 +96,9 @@ public class GamePiece : MonoBehaviour {
 		} 
 	}
 
-	public void ScorePoints () {
+	public void ScorePoints (int multiplier = 1, int bonus = 0) {
 		if (ScoreManager.Instance != null) {
-			ScoreManager.Instance.AddScore(scoreValue);
+			ScoreManager.Instance.AddScore(scoreValue * multiplier + bonus);
 		}
 	}
 
