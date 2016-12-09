@@ -294,6 +294,16 @@ public class Board : MonoBehaviour {
 					clickedTileBomb = DropBomb(clickedTile.XIndex, clickedTile.YIndex, swapDirection, clickedPieceMatches);
 					targetTileBomb = DropBomb(targetTile.XIndex, targetTile.YIndex, swapDirection, targetPieceMatches);
 
+					if (clickedTileBomb != null && targetPiece != null) {
+						GamePiece clickedBombPiece = clickedTileBomb.GetComponent<GamePiece>();
+						clickedBombPiece.ChangeColor(targetPiece);
+					}
+
+					if (targetTileBomb != null && clickedPiece != null) {
+						GamePiece targetBombPiece = targetTileBomb.GetComponent<GamePiece>();
+						targetBombPiece.ChangeColor(clickedPiece);
+					}
+
 					ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList());
 				}
 			}

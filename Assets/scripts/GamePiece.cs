@@ -94,4 +94,22 @@ public class GamePiece : MonoBehaviour {
 		float a = easeAmount + 1;
 		return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1 - x, a));
 	}
+
+	public void ChangeColor (GamePiece pieceToMatch) {
+		SpriteRenderer rendererToChange = GetComponent<SpriteRenderer>();
+
+		Color colorToMatch = Color.clear;
+
+		if (pieceToMatch != null) {
+			SpriteRenderer rendererToMatch = pieceToMatch.GetComponent<SpriteRenderer>();
+
+			if (rendererToMatch != null && rendererToChange != null) {
+				rendererToChange.color = rendererToMatch.color;
+			} else {
+				rendererToChange.color = colorToMatch;
+			}
+
+			matchVal = pieceToMatch.matchVal;
+		} 
+	}
 }
