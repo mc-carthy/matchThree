@@ -719,6 +719,8 @@ public class Board : MonoBehaviour {
 			yield return new WaitForSeconds(0.2f);
 
 			matches = FindMatchesAt(movingPieces);
+			collectedPieces = FindCollectiblesAt(0);
+			matches = matches.Union(collectedPieces).ToList();
 
 			if (matches.Count == 0) {
 				isFinished = true;
