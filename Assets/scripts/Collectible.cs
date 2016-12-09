@@ -2,6 +2,7 @@
 
 public class Collectible : GamePiece {
 
+	[SerializeField]
 	private bool clearedByBomb;
 	public bool ClearedByBomb {
 		get {
@@ -9,6 +10,7 @@ public class Collectible : GamePiece {
 		}
 	}
 
+	[SerializeField]
 	private bool clearedAtBottom;
 	public bool ClearedAtBottom {
 		get {
