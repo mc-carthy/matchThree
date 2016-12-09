@@ -617,6 +617,9 @@ public class Board : MonoBehaviour {
 
 			List<GamePiece> bombedPieces = GetBombedPieces(gamePieces);
 			gamePieces = gamePieces.Union(bombedPieces).ToList();
+			
+			bombedPieces = GetBombedPieces(gamePieces);
+			gamePieces = gamePieces.Union(bombedPieces).ToList();
 
 			ClearPieceAt(gamePieces);
 			BreakTileAt(gamePieces);
