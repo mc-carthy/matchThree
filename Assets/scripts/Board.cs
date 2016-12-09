@@ -498,12 +498,16 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private void ClearPieceAt (List<GamePiece> gamePieces) {
+	private void ClearPieceAt (List<GamePiece> gamePieces, List<GamePiece> bombedPieces) {
 		foreach (GamePiece piece in gamePieces) {
 			if (piece != null) {
 				ClearPieceAt(piece.XIndex, piece.YIndex);
 				if (particleManager != null) {
-					particleManager.ClearPieceFxAt(piece.XIndex, piece.YIndex);
+					if (bombedPieces.Contains(piece)) {
+						particleManager.BombFxAt(piece.XIndex, piece.YIndex);
+					} else {
+						particleManager.ClearPieceFxAt(piece.XIndex, piece.YIndex);
+					}
 				}
 			}
 		}
@@ -617,11 +621,11 @@ public class Board : MonoBehaviour {
 
 			List<GamePiece> bombedPieces = GetBombedPieces(gamePieces);
 			gamePieces = gamePieces.Union(bombedPieces).ToList();
-			
+
 			bombedPieces = GetBombedPieces(gamePieces);
 			gamePieces = gamePieces.Union(bombedPieces).ToList();
 
-			ClearPieceAt(gamePieces);
+			ClearPieceAt(gamePieces, bombedPieces);
 			BreakTileAt(gamePieces);
 
 			if (clickedTileBomb != null) {
@@ -700,8 +704,8 @@ public class Board : MonoBehaviour {
 	private List<GamePiece> GetAdjacentPieces (int x, int y, int offset = 1) {
 		List<GamePiece> gamePieces = new List<GamePiece>();
 
-		for (int i = x - offset; i < x + offset; i++) {
-			for (int j = y - offset; j < y + offset; j++) {
+		for (int i = x - offset; i <= x + offset; i++) {
+			for (int j = y - offset; j <= y + offset; j++) {
 				if (allGamePieces[i, j] != null && IsWithinBounds(i, j)) {
 					gamePieces.Add(allGamePieces[i, j]);
 				}
