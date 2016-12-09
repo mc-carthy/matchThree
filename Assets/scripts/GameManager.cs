@@ -9,6 +9,8 @@ public class GameManager : Singleton<GameManager> {
 	private ScreenFader screenFader;
 	[SerializeField]
 	private Text levelNameText;
+	[SerializeField]
+	private Text movesLeftText;
 
 	private Board board;
 	private int movesLeft = 30;
@@ -23,8 +25,19 @@ public class GameManager : Singleton<GameManager> {
 		if (levelNameText != null) {
 			levelNameText.text = scene.name;
 		}
-
+		UpdateMoves();
 		StartCoroutine(ExecuteGameLoop());
+	}
+
+	public void DecrementMoves (int moves = 1) {
+		movesLeft--;
+		UpdateMoves();
+	}
+
+	private void UpdateMoves () {
+		if (movesLeftText != null) {
+			movesLeftText.text = movesLeft.ToString();
+		}
 	}
 
 	private IEnumerator ExecuteGameLoop () {
@@ -53,11 +66,19 @@ public class GameManager : Singleton<GameManager> {
 
 	private IEnumerator PlayGameRoutine() {
 		while (!isGameOver) {
+			if (movesLeft <= 0) {
+				isGameOver = true;
+				isWinner = false;
+			}
 			yield return null;
 		}
 	}
 
 	private IEnumerator EndGameRoutine () {
+		if (screenFader != null) {
+			screenFader.FadeOn();
+		}
+		
 		if (isWinner) {
 			Debug.Log("A winner is you!");
 		} else {

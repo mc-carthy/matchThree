@@ -355,6 +355,11 @@ public class Board : MonoBehaviour {
 					clickedPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
 					targetPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
 				} else {
+
+					if (GameManager.Instance != null) {
+						GameManager.Instance.DecrementMoves();
+					}
+
 					yield return new WaitForSeconds(swapTime);
 					Vector2 swapDirection = new Vector2(targetTile.XIndex - clickedTile.XIndex, targetTile.YIndex - clickedTile.YIndex);
 
