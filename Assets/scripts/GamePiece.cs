@@ -16,6 +16,17 @@ public enum MatchValue {
 
 public class GamePiece : MonoBehaviour {
 
+	[SerializeField]
+	private MatchValue matchVal;
+	public MatchValue MatchVal {
+		get {
+			return matchVal;
+		}
+		set {
+			matchVal = value;
+		}
+	}
+	
 	private int xIndex;
 	public int XIndex {
 		get {
@@ -29,15 +40,11 @@ public class GamePiece : MonoBehaviour {
 			return yIndex;
 		}
 	}
-	
-	[SerializeField]
-	private MatchValue matchVal;
-	public MatchValue MatchVal {
+
+	private int scoreValue = 20;
+	public int ScoreValue {
 		get {
-			return matchVal;
-		}
-		set {
-			matchVal = value;
+			return scoreValue;
 		}
 	}
 
@@ -70,6 +77,30 @@ public class GamePiece : MonoBehaviour {
 		}
 	}
 
+	public void ChangeColor (GamePiece pieceToMatch) {
+		SpriteRenderer rendererToChange = GetComponent<SpriteRenderer>();
+
+		Color colorToMatch = Color.clear;
+
+		if (pieceToMatch != null) {
+			SpriteRenderer rendererToMatch = pieceToMatch.GetComponent<SpriteRenderer>();
+
+			if (rendererToMatch != null && rendererToChange != null) {
+				rendererToChange.color = rendererToMatch.color;
+			} else {
+				rendererToChange.color = colorToMatch;
+			}
+
+			matchVal = pieceToMatch.matchVal;
+		} 
+	}
+
+	public void ScorePoints () {
+		if (ScoreManager.Instance != null) {
+			ScoreManager.Instance.AddScore(scoreValue);
+		}
+	}
+
 	private IEnumerator MoveRoutine (Vector3 destination, float timeToMove) {
 		Vector3 startPos = transform.position;
 		bool isAtDestination = false;
@@ -97,23 +128,5 @@ public class GamePiece : MonoBehaviour {
 	private float Ease (float x) {
 		float a = easeAmount + 1;
 		return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1 - x, a));
-	}
-
-	public void ChangeColor (GamePiece pieceToMatch) {
-		SpriteRenderer rendererToChange = GetComponent<SpriteRenderer>();
-
-		Color colorToMatch = Color.clear;
-
-		if (pieceToMatch != null) {
-			SpriteRenderer rendererToMatch = pieceToMatch.GetComponent<SpriteRenderer>();
-
-			if (rendererToMatch != null && rendererToChange != null) {
-				rendererToChange.color = rendererToMatch.color;
-			} else {
-				rendererToChange.color = colorToMatch;
-			}
-
-			matchVal = pieceToMatch.matchVal;
-		} 
 	}
 }

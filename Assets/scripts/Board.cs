@@ -567,6 +567,7 @@ public class Board : MonoBehaviour {
 	private void ClearPieceAt (List<GamePiece> gamePieces, List<GamePiece> bombedPieces) {
 		foreach (GamePiece piece in gamePieces) {
 			if (piece != null) {
+				piece.ScorePoints();
 				ClearPieceAt(piece.XIndex, piece.YIndex);
 				if (particleManager != null) {
 					if (bombedPieces.Contains(piece)) {
