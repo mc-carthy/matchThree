@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GamePiece : MonoBehaviour {
+public enum MatchValue {
+	Yellow,
+	Blue,
+	Magenta,
+	Indigo,
+	Green,
+	Teal,
+	Red,
+	Cyan,
+	Wild
+}
 
-	public enum MatchValue {
-		Yellow,
-		Blue,
-		Magenta,
-		Indigo,
-		Green,
-		Teal,
-		Red,
-		Cyan,
-		Wild
-	}
+public class GamePiece : MonoBehaviour {
 
 	private int xIndex;
 	public int XIndex {
@@ -34,6 +34,9 @@ public class GamePiece : MonoBehaviour {
 	public MatchValue MatchVal {
 		get {
 			return matchVal;
+		}
+		set {
+			matchVal = value;
 		}
 	}
 

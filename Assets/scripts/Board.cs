@@ -35,6 +35,8 @@ public class Board : MonoBehaviour {
 	[SerializeField]
 	private GameObject adjacentBombPrefab;
 	[SerializeField]
+	private GameObject colorBombPrefab;
+	[SerializeField]
 	private StartingObject[] startingTiles;
 	[SerializeField]
 	private StartingObject[] startingGamePieces;
@@ -283,8 +285,23 @@ public class Board : MonoBehaviour {
 
 				List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.XIndex, clickedTile.YIndex);
 				List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.XIndex, targetTile.YIndex);
+				List<GamePiece> colorMatches = new List<GamePiece>();
 
-				if (targetPieceMatches.Count == 0 && clickedPieceMatches.Count == 0) {
+				if (IsColorBomb(clickedPiece) && !IsColorBomb(targetPiece)) {
+					clickedPiece.MatchVal = targetPiece.MatchVal;
+					colorMatches = FindAllMatcheValue(clickedPiece.MatchVal);
+				} else if (!IsColorBomb(clickedPiece) && IsColorBomb(targetPiece)) {
+					targetPiece.MatchVal = clickedPiece.MatchVal;
+					colorMatches = FindAllMatcheValue(targetPiece.MatchVal);
+				} else if (IsColorBomb(clickedPiece) && IsColorBomb(targetPiece)) {
+					foreach (GamePiece piece in allGamePieces) {
+						if (!colorMatches.Contains(piece)) {
+							colorMatches.Add(piece);
+						}
+					}
+				}
+
+				if (targetPieceMatches.Count == 0 && clickedPieceMatches.Count == 0 && colorMatches.Count == 0) {
 					clickedPiece.Move(clickedTile.XIndex, clickedTile.YIndex, swapTime);
 					targetPiece.Move(targetTile.XIndex, targetTile.YIndex, swapTime);
 				} else {
@@ -304,7 +321,7 @@ public class Board : MonoBehaviour {
 						targetBombPiece.ChangeColor(clickedPiece);
 					}
 
-					ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList());
+					ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList().Union(colorMatches).ToList());
 				}
 			}
 		}
@@ -804,5 +821,33 @@ public class Board : MonoBehaviour {
 		if (IsWithinBounds(x, y)) {
 			allGamePieces[x, y] = bomb.GetComponent<GamePiece>();;
 		}
+	}
+
+	private List<GamePiece> FindAllMatcheValue (MatchValue value) {
+
+		List<GamePiece> foundPieces = new List<GamePiece>();
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				if (allGamePieces[i, j] != null) {
+					if (allGamePieces[i, j].MatchVal == value) {
+						foundPieces.Add(allGamePieces[i, j]);
+					}
+				}
+			}
+		}
+
+		return foundPieces;
+		
+	}
+
+	private bool IsColorBomb (GamePiece piece) {
+		Bomb bomb = piece.GetComponent<Bomb>();
+
+		if (bomb != null) {
+			return (bomb.BType == BombType.Color);
+		}
+		
+		return false;
 	}
 }
