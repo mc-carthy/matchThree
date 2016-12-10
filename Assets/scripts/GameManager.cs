@@ -11,13 +11,22 @@ public class GameManager : Singleton<GameManager> {
 	private Text levelNameText;
 	[SerializeField]
 	private Text movesLeftText;
+	[SerializeField]
+	private MessageWindow messageWindow;
+	[SerializeField]
+	private Sprite goalIcon;
+	[SerializeField]
+	private Sprite loseIcon;
+	[SerializeField]
+	private Sprite winIcon;
 
 	private Board board;
-	private int movesLeft = 30;
+	private int movesLeft = 3;
 	private int scoreGoal = 10000;
 	private bool isReadyToBegin;
 	private bool isGameOver;
 	private bool isWinner;
+	private bool isReadyToReload;
 
 	private void Start () {
 		board = GameObject.FindObjectOfType<Board>().GetComponent<Board>();
@@ -34,6 +43,10 @@ public class GameManager : Singleton<GameManager> {
 		UpdateMoves();
 	}
 
+	public void BeginGame () {
+		isReadyToBegin = true;
+	}
+
 	private void UpdateMoves () {
 		if (movesLeftText != null) {
 			movesLeftText.text = movesLeft.ToString();
@@ -47,10 +60,14 @@ public class GameManager : Singleton<GameManager> {
 	}
 
 	private IEnumerator StartGameRoutine () {
+
+		if (messageWindow != null) {
+			messageWindow.GetComponent<RectTransformMover>().MoveOn();
+			messageWindow.ShowMessage(goalIcon, "Score Goal\n" + scoreGoal.ToString(), "Start!");
+		}
+
 		while (!isReadyToBegin) {
 			yield return null;
-			yield return new WaitForSeconds(2f); // TODO - Remove this hardcoded pause
-			isReadyToBegin = true;
 		}
 
 		if (screenFader != null) {
@@ -75,16 +92,34 @@ public class GameManager : Singleton<GameManager> {
 	}
 
 	private IEnumerator EndGameRoutine () {
+
+		isReadyToReload = false;
+
 		if (screenFader != null) {
 			screenFader.FadeOn();
 		}
-		
+
 		if (isWinner) {
-			Debug.Log("A winner is you!");
+			if (messageWindow != null) {
+				messageWindow.GetComponent<RectTransformMover>().MoveOn();
+				messageWindow.ShowMessage(winIcon, "You Win!", "Play Again!");
+			}
 		} else {
-			Debug.Log("Loser...");
+			if (messageWindow != null) {
+				messageWindow.GetComponent<RectTransformMover>().MoveOn();
+				messageWindow.ShowMessage(loseIcon, "You Lose!", "Play Again!");
+			}		
 		}
-		yield return null;
+		
+		while (!isReadyToReload) {
+			yield return null;
+		}
+
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+	}
+
+	public void ReloadScene () {
+		isReadyToReload = true;
 	}
 
 }

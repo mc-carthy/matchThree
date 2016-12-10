@@ -21,15 +21,15 @@ public class RectTransformMover : MonoBehaviour {
 	}
 
 	public void MoveOn () {
-		Move(startPos, endPos, timeToMove);
+		Move(startPos, onScreenPos, timeToMove);
 	}
 
 	public void MoveOff () {
-		Move(endPos, startPos, timeToMove);
+		Move(onScreenPos, endPos, timeToMove);
 	}
 
 	private void Move (Vector3 startPos, Vector3 endPos, float timeToMove) {
-		if (isMoving) {
+		if (!isMoving) {
 			StartCoroutine(MoveRoutine(startPos, endPos, timeToMove));
 		}
 	}
