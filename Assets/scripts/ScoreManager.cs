@@ -4,10 +4,16 @@ using System.Collections;
 
 public class ScoreManager : Singleton<ScoreManager> {
 
+	private int currentScore;
+	public int CurrentScore {
+		get {
+			return currentScore;
+		}
+	}
+
 	[SerializeField]
 	private Text scoreText;
 
-	private int currentScore;
 	private int counterValue;
 	private int increment = 5;
 

@@ -21,7 +21,7 @@ public class GameManager : Singleton<GameManager> {
 	private Sprite winIcon;
 
 	private Board board;
-	private int movesLeft = 3;
+	private int movesLeft = 30;
 	private int scoreGoal = 10000;
 	private bool isReadyToBegin;
 	private bool isGameOver;
@@ -83,6 +83,14 @@ public class GameManager : Singleton<GameManager> {
 
 	private IEnumerator PlayGameRoutine() {
 		while (!isGameOver) {
+			
+			if (ScoreManager.Instance != null) {
+				if (ScoreManager.Instance.CurrentScore > scoreGoal) {
+					isGameOver = true;
+					isWinner = true;
+				}
+			}
+
 			if (movesLeft <= 0) {
 				isGameOver = true;
 				isWinner = false;
