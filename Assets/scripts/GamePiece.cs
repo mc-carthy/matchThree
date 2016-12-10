@@ -51,8 +51,6 @@ public class GamePiece : MonoBehaviour {
 
 	private Board board;
 	private bool isMoving;
-	[Range(0, 2)]
-	private float easeAmount = 1.5f;
 
 	private void Update () {
 		// if (Input.GetKeyDown(KeyCode.LeftArrow)) {
@@ -126,7 +124,7 @@ public class GamePiece : MonoBehaviour {
 		isMoving = false;
 	}
 
-	private float Ease (float x) {
+	private float Ease (float x, float easeAmount = 1.5f) {
 		float a = easeAmount + 1;
 		return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1 - x, a));
 	}
