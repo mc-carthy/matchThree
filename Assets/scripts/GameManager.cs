@@ -103,10 +103,6 @@ public class GameManager : Singleton<GameManager> {
 
 		isReadyToReload = false;
 
-		if (screenFader != null) {
-			screenFader.FadeOn();
-		}
-
 		if (isWinner) {
 			if (messageWindow != null) {
 				messageWindow.GetComponent<RectTransformMover>().MoveOn();
@@ -117,6 +113,12 @@ public class GameManager : Singleton<GameManager> {
 				messageWindow.GetComponent<RectTransformMover>().MoveOn();
 				messageWindow.ShowMessage(loseIcon, "You Lose!", "Play Again!");
 			}		
+		}
+
+		yield return new WaitForSeconds(1f);
+
+		if (screenFader != null) {	
+			screenFader.FadeOn();
 		}
 		
 		while (!isReadyToReload) {
